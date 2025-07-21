@@ -16,11 +16,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #FDFBF6; }
+        /* YUMUŞAK SCROLL EFEKTİ */
+        html {
+            scroll-behavior: smooth;
+        }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #FDFBF6; 
+        }
         .text-chiron-dark { color: #4A5568; }
         .text-chiron-blue { color: #5F939A; }
         .bg-chiron-blue { background-color: #5F939A; }
         .hover\:bg-chiron-blue-dark:hover { background-color: #4A7C82; }
+        /* GEÇİŞ ANİMASYONLARI */
+        .transition-all {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 300ms;
+        }
     </style>
 </head>
 <body class="text-chiron-dark antialiased">
@@ -46,7 +59,7 @@
                 Chiron, öncül psikolojik desteğe erişimi kısıtlı olan herkes için burada. Psikolojik iyi oluş yolculuğunda sana eşlik eden, yargılamayan ve şefkatli dijital rehberin.
             </p>
             
-            <a href="#" class="bg-chiron-blue text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-chiron-blue-dark transition-all duration-300 shadow-lg inline-block">
+            <a href="#" class="bg-chiron-blue text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-chiron-blue-dark transition-all shadow-lg inline-block">
                 Hemen Sohbete Başla
             </a>
             <!-- YENİ: Güven Mesajı -->
@@ -63,7 +76,7 @@
             <div class="flex flex-col md:flex-row justify-center gap-10 md:gap-16">
                 <!-- Adım 1: Anlat -->
                 <div class="flex-1 max-w-sm">
-                    <div class="bg-chiron-blue bg-opacity-10 p-4 inline-block rounded-full mb-4">
+                    <div class="bg-chiron-blue bg-opacity-10 w-16 h-16 flex items-center justify-center mx-auto rounded-full mb-4">
                         <!-- DÜZELTİLDİ: Garantili Heroicon -->
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-chiron-blue">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-2.138a1.125 1.125 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
@@ -74,7 +87,7 @@
                 </div>
                 <!-- Adım 2: Keşfet -->
                 <div class="flex-1 max-w-sm">
-                    <div class="bg-chiron-blue bg-opacity-10 p-4 inline-block rounded-full mb-4">
+                    <div class="bg-chiron-blue bg-opacity-10 w-16 h-16 flex items-center justify-center mx-auto rounded-full mb-4">
                         <!-- DÜZELTİLDİ: Garantili Heroicon -->
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-chiron-blue">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.562L16.25 21.75l-.648-1.188a2.25 2.25 0 01-1.423-1.423L13.5 18.75l1.188-.648a2.25 2.25 0 011.423-1.423L16.25 15l.648 1.188a2.25 2.25 0 011.423 1.423L18.75 18l-1.188.648a2.25 2.25 0 01-1.423 1.423z" />
@@ -85,7 +98,7 @@
                 </div>
                 <!-- Adım 3: Büyü -->
                 <div class="flex-1 max-w-sm">
-                    <div class="bg-chiron-blue bg-opacity-10 p-4 inline-block rounded-full mb-4">
+                    <div class="bg-chiron-blue bg-opacity-10 w-16 h-16 flex items-center justify-center mx-auto rounded-full mb-4">
                          <!-- DÜZELTİLDİ: Garantili Heroicon -->
                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-chiron-blue">
                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c1.358 0 2.673-.112 3.954-.332M12 21c-1.358 0-2.673-.112-3.954-.332M3.253 9.332A9.003 9.003 0 0112 3c1.358 0 2.673.112 3.954.332M20.747 9.332A9.003 9.003 0 0012 3c-1.358 0-2.673-.112-3.954-.332" />
@@ -99,7 +112,6 @@
         </div>
     </section>
 
-    <!-- Diğer Bölümler aynı kaldı -->
     <section id="why-chiron" class="py-20">
         <div class="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
             <div class="md:w-1/2">
@@ -133,7 +145,7 @@
         <div class="container mx-auto px-6 text-center">
             <h2 class="text-3xl font-bold mb-4">Kendine Verebileceğin En Güzel Hediye</h2>
             <p class="text-lg max-w-2xl mx-auto mb-8">Bugün, kendine daha şefkatli yaklaşmak ve iç dünyanı keşfetmek için ilk adımı at. Chiron bu yolda sana eşlik etmek için burada.</p>
-            <a href="#" class="bg-chiron-blue text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-chiron-blue-dark transition-all duration-300 shadow-lg">
+            <a href="#" class="bg-chiron-blue text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-chiron-blue-dark transition-all shadow-lg">
                 Ücretsiz Başla
             </a>
         </div>
