@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chiron - İçsel Yolculuğuna Başla</title>
     
+    <!-- DÜZELTİLDİ: Tarayıcı sekmesi için ikon (favicon) eklendi -->
+    <link rel="icon" href="chiron_logo.png" type="image/png">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -26,18 +29,19 @@
     <!-- Ana Başlık ve Giriş Bölümü -->
     <header class="text-center py-20 px-6">
         <div class="max-w-4xl mx-auto">
-            <img src="chiron_logo.jpg" alt="Chiron Logo" class="mx-auto h-20 mb-8" onerror="this.onerror=null;this.src='https://placehold.co/200x80/FDFBF6/5F939A?text=Chiron';">
+            <!-- DÜZELTİLDİ: Logo PNG olarak değiştirildi -->
+            <img src="chiron_logo.png" alt="Chiron Logo" class="mx-auto h-20 mb-8" onerror="this.onerror=null;this.src='https://placehold.co/200x80/FDFBF6/5F939A?text=Chiron';">
             
             <h1 class="text-4xl md:text-6xl font-bold text-chiron-dark leading-tight mb-4">
                 Duygularını Anlamak İçin<br class="hidden md:block"> Bir Adım At
             </h1>
             
-            <!-- DÜZELTİLDİ: Paragraf etiketi kapatıldı -->
             <p class="text-lg md:text-xl max-w-2xl mx-auto mb-8">
                 Chiron, öncül psikolojik desteğe erişimi kısıtlı olan herkes için burada. Psikolojik iyi oluş yolculuğunda sana eşlik eden, yargılamayan ve şefkatli dijital rehberin.
             </p>
             
-            <a href="#" class="bg-chiron-blue text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-chiron-blue-dark transition-all duration-300 shadow-lg">
+            <!-- DÜZELTİLDİ: Butonun konumu iyileştirildi (mt-8 class'ı eklendi) -->
+            <a href="#" class="bg-chiron-blue text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-chiron-blue-dark transition-all duration-300 shadow-lg inline-block mt-8">
                 Yolculuğa Başla
             </a>
         </div>
@@ -74,7 +78,7 @@
                 <div class="flex-1 max-w-sm">
                     <div class="bg-chiron-blue bg-opacity-10 p-4 inline-block rounded-full mb-4">
                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-chiron-blue">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c1.358 0 2.673-.112 3.954-.332M12 21c-1.358 0-2.673-.112-3.954-.332M3.253 9.332A9.003 9.003 0 0112 3c1.358 0 2.673.112 3.954.332M20.747 9.332A9.003 9.003 0 0012 3c-1.358 0-2.673.112-3.954-.332" />
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c1.358 0 2.673-.112 3.954-.332M12 21c-1.358 0-2.673-.112-3.954-.332M3.253 9.332A9.003 9.003 0 0112 3c1.358 0 2.673.112 3.954.332M20.747 9.332A9.003 9.003 0 0012 3c-1.358 0-2.673-.112-3.954-.332" />
                           <path stroke-linecap="round" stroke-linejoin="round" d="M12 9.75a3 3 0 100-6 3 3 0 000 6z" />
                         </svg>
                     </div>
@@ -85,7 +89,7 @@
         </div>
     </section>
 
-    <!-- Diğer Bölümler (Değişiklik yok) -->
+    <!-- Diğer Bölümler -->
     <section id="why-chiron" class="py-20">
         <div class="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
             <div class="md:w-1/2">
