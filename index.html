@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chiron - İçsel Yolculuğuna Başla</title>
     
-    <!-- Favicon yolu daha net hale getirildi -->
     <link rel="icon" href="./chiron_logo.png" type="image/png">
     
     <!-- Tailwind CSS -->
@@ -30,9 +29,14 @@
     <header class="text-center py-20 px-6">
         <div class="max-w-4xl mx-auto">
             
-            <!-- Logo yolu daha net hale getirildi ve hata durumu eklendi -->
-            <img src="./chiron_logo.png" alt="Chiron Logo" class="mx-auto h-20 mb-8" 
-                 onerror="this.onerror=null;this.src='https://placehold.co/200x80/FDFBF6/5F939A?text=Logo+Bulunamadı';">
+            <div class="relative inline-block mb-8">
+                <img src="./chiron_logo.png" alt="Chiron Logo" class="mx-auto h-20" 
+                     onerror="this.onerror=null;this.src='https://placehold.co/200x80/FDFBF6/5F939A?text=Logo+Bulunamadı';">
+                <!-- YENİ: BETA Rozeti -->
+                <span class="absolute top-0 right-0 -mr-4 -mt-2 bg-chiron-blue text-white text-xs font-bold px-2 py-1 rounded-full">
+                    BETA
+                </span>
+            </div>
             
             <h1 class="text-4xl md:text-6xl font-bold text-chiron-dark leading-tight mb-4">
                 Duygularını Anlamak İçin<br class="hidden md:block"> Bir Adım At
@@ -42,9 +46,11 @@
                 Chiron, öncül psikolojik desteğe erişimi kısıtlı olan herkes için burada. Psikolojik iyi oluş yolculuğunda sana eşlik eden, yargılamayan ve şefkatli dijital rehberin.
             </p>
             
-            <a href="#" class="bg-chiron-blue text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-chiron-blue-dark transition-all duration-300 shadow-lg inline-block mt-8">
-                Yolculuğa Başla
+            <a href="#" class="bg-chiron-blue text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-chiron-blue-dark transition-all duration-300 shadow-lg inline-block">
+                Hemen Sohbete Başla
             </a>
+            <!-- YENİ: Güven Mesajı -->
+            <p class="mt-4 text-sm text-gray-500">Ücretsiz • Gizli • Her zaman yanında</p>
         </div>
     </header>
 
@@ -58,7 +64,7 @@
                 <!-- Adım 1: Anlat -->
                 <div class="flex-1 max-w-sm">
                     <div class="bg-chiron-blue bg-opacity-10 p-4 inline-block rounded-full mb-4">
-                        <!-- DÜZELTİLDİ: Basit ve uyumlu SVG ikonu -->
+                        <!-- DÜZELTİLDİ: Garantili Heroicon -->
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-chiron-blue">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-2.138a1.125 1.125 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
                         </svg>
@@ -69,9 +75,9 @@
                 <!-- Adım 2: Keşfet -->
                 <div class="flex-1 max-w-sm">
                     <div class="bg-chiron-blue bg-opacity-10 p-4 inline-block rounded-full mb-4">
-                        <!-- DÜZELTİLDİ: Basit ve uyumlu SVG ikonu -->
+                        <!-- DÜZELTİLDİ: Garantili Heroicon -->
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-chiron-blue">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.562L16.25 21.75l-.648-1.188a2.25 2.25 0 01-1.423-1.423L13.5 18.75l1.188-.648a2.25 2.25 0 011.423-1.423L16.25 15l.648 1.188a2.25 2.25 0 011.423 1.423L18.75 18l-1.188.648a2.25 2.25 0 01-1.423 1.423z" />
                         </svg>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">2. Keşfet</h3>
@@ -80,7 +86,7 @@
                 <!-- Adım 3: Büyü -->
                 <div class="flex-1 max-w-sm">
                     <div class="bg-chiron-blue bg-opacity-10 p-4 inline-block rounded-full mb-4">
-                         <!-- DÜZELTİLDİ: Basit ve uyumlu SVG ikonu -->
+                         <!-- DÜZELTİLDİ: Garantili Heroicon -->
                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-chiron-blue">
                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c1.358 0 2.673-.112 3.954-.332M12 21c-1.358 0-2.673-.112-3.954-.332M3.253 9.332A9.003 9.003 0 0112 3c1.358 0 2.673.112 3.954.332M20.747 9.332A9.003 9.003 0 0012 3c-1.358 0-2.673-.112-3.954-.332" />
                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9.75a3 3 0 100-6 3 3 0 000 6z" />
@@ -93,6 +99,7 @@
         </div>
     </section>
 
+    <!-- Diğer Bölümler aynı kaldı -->
     <section id="why-chiron" class="py-20">
         <div class="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
             <div class="md:w-1/2">
