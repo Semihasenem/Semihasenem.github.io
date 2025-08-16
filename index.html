@@ -1,396 +1,220 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chiron ile Sohbet</title>
-    <link rel="icon" href="{{ url_for('static', filename='images/favicon.jpeg') }}" type="image/jpeg">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F0F4F8; }
-        .text-chiron-dark { color: #4A5568; }
-        .text-chiron-blue { color: #5F939A; }
-        .bg-chiron-blue { background-color: #5F939A; }
-        .chat-bubble-user { background-color: #ffffff; align-self: flex-end; border-radius: 20px 20px 4px 20px; max-width: 85%; }
-        .chat-bubble-assistant { background-color: #E6F0F1; align-self: flex-start; border-radius: 20px 20px 20px 4px; max-width: 85%; }
-        html, body { height: 100%; }
-        .chat-container { display: flex; flex-direction: column; height: 100vh; }
-        .chat-messages { flex-grow: 1; overflow-y: auto; }
-        /* YENİ: "Yazıyor..." animasyonu için stiller */
-        .typing-indicator {
-            display: flex;
-            align-items: center;
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Chiron – Günlük mikro seanslarla kaygı, uyku ve stres için destek</title>
+
+  <!-- Tailwind CDN + özel tema -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'chiron-blue':  '#6A94A4',
+            'chiron-ink':   '#334155',
+            'chiron-cream': '#F8F7F3'
+          },
+          fontFamily: { inter: ['Inter','ui-sans-serif','system-ui'] },
+          boxShadow: { soft: '0 10px 30px -12px rgba(0,0,0,.12)' }
         }
-        .typing-indicator span {
-            height: 8px;
-            width: 8px;
-            margin: 0 2px;
-            background-color: #9FB3B6;
-            border-radius: 50%;
-            display: inline-block;
-            animation: bounce 1.4s infinite ease-in-out both;
-        }
-        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1.0); }
-        }
-    </style>
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Meta / sosyal -->
+  <meta name="description" content="Chiron: 10–12 dakikalık rehberli pratiklerle ölçülebilir ilerleme. Kaygı, uyku, stres için günlük mikro seanslar.">
+  <link rel="icon" type="image/png" href="./chiron_logo.png">
+  <meta name="theme-color" content="#6A94A4">
+  <meta property="og:title" content="Chiron – İçsel Yolculuğuna Başla">
+  <meta property="og:description" content="Günlük mikro seanslarla kaygı, uyku ve stres için pratik destek.">
+  <meta property="og:image" content="https://www.chiron.com.tr/chiron_logo.png">
+  <style>
+    /* Hafif bulut dokusu (hero arka planı) */
+    .clouds:before{
+      content:""; position:absolute; inset:-25% -10% 0 -10%;
+      background:
+        radial-gradient(180px 70px at 10% 20%, rgba(255,255,255,.7), transparent 60%),
+        radial-gradient(220px 90px at 70% 10%, rgba(255,255,255,.55), transparent 65%),
+        radial-gradient(200px 80px at 40% 35%, rgba(255,255,255,.4), transparent 60%),
+        radial-gradient(280px 120px at 90% 60%, rgba(255,255,255,.35), transparent 65%);
+      filter: blur(8px);
+    }
+  </style>
 </head>
-<body class="text-chiron-dark">
+<body class="bg-chiron-cream text-chiron-ink font-inter antialiased">
 
-    {% if onboarding_needed %}
-    <div id="onboarding-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 transition-opacity duration-300">
-        <div class="bg-white rounded-lg shadow-xl p-8 max-w-lg w-full text-center">
-            
-            <div id="onboarding-welcome">
-                <img src="{{ url_for('static', filename='images/chiron_logo.png') }}" alt="Chiron Logo" class="h-8 mx-auto mb-4">
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Merhaba! ✨</h2>
-                <p class="text-gray-600 mb-6">Seni daha iyi tanımak için birkaç kısa sorum olacak.</p>
-            </div>
-            
-            <div id="onboarding-content" class="hidden">
-            </div>
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-chiron-cream/90 backdrop-blur border-b border-black/5">
+    <div class="max-w-6xl mx-auto h-16 px-6 md:px-8 flex items-center justify-between">
+      <a class="flex items-center gap-3" href="#top">
+        <img src="./chiron_logo.png" alt="Chiron" class="h-8 w-auto" loading="eager" decoding="async">
+        <span class="sr-only">Chiron</span>
+      </a>
 
-            <div class="mt-8">
-                <button id="next-button" class="bg-chiron-blue text-white font-bold py-2 px-8 rounded-full hover:bg-opacity-90 transition-colors">İleri</button>
-            </div>
+      <nav class="hidden md:flex items-center gap-6 text-sm">
+        <a href="#features" class="hover:opacity-80">Özellikler</a>
+        <a href="#programs"  class="hover:opacity-80">Programlar</a>
+        <a href="#faq"       class="hover:opacity-80">SSS</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <a href="https://beta.chiron.com.tr" class="hidden sm:inline-flex items-center rounded-xl px-4 py-2 bg-chiron-blue text-white hover:opacity-90 shadow-soft">Ücretsiz Başla</a>
+        <button id="menuBtn" class="md:hidden p-2 rounded-lg border border-black/10" aria-label="Menüyü Aç/Kapat">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+    <!-- Mobil menü -->
+    <div id="mobileMenu" class="md:hidden hidden border-t border-black/5">
+      <div class="max-w-6xl mx-auto px-6 py-3 flex flex-col gap-3 text-sm">
+        <a href="#features" class="py-2">Özellikler</a>
+        <a href="#programs"  class="py-2">Programlar</a>
+        <a href="#faq"       class="py-2">SSS</a>
+        <a href="https://beta.chiron.com.tr" class="mt-2 inline-flex items-center justify-center rounded-xl px-4 py-2 bg-chiron-blue text-white">Ücretsiz Başla</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section id="top" class="relative">
+    <div class="clouds absolute inset-0 pointer-events-none"></div>
+    <div class="relative max-w-6xl mx-auto px-6 md:px-8 py-14 md:py-20 grid md:grid-cols-2 gap-10 items-center">
+      <div>
+        <h1 class="text-3xl md:text-5xl font-semibold leading-tight">
+          Günlük mikro seanslarla <span class="text-chiron-blue">kaygı, uyku, stres</span> için gerçek destek.
+        </h1>
+        <p class="mt-4 text-base md:text-lg text-black/70">
+          10–12 dakikalık rehberli pratikler, ölçülebilir ilerleme ve nazik bir yol arkadaşı.
+        </p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="https://beta.chiron.com.tr" class="inline-flex items-center rounded-xl px-5 py-3 bg-chiron-blue text-white hover:opacity-90 shadow-soft">Ücretsiz Başla</a>
+          <a href="#features" class="inline-flex items-center rounded-xl px-5 py-3 border border-chiron-blue/40 hover:bg-white/50">Nasıl Çalışır?</a>
         </div>
+        <p class="mt-3 text-xs text-black/60">7 gün dene · İstediğin an iptal</p>
+      </div>
+
+      <div class="relative aspect-[4/3] md:aspect-square rounded-2xl border border-black/5 bg-white/60 shadow-soft overflow-hidden">
+        <div class="absolute inset-0 grid place-items-center">
+          <img src="./chiron_logo.png" alt="Chiron logo" class="h-20 md:h-28 w-auto opacity-90 select-none">
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-tr from-chiron-blue/10 via-transparent to-white/40 pointer-events-none"></div>
+      </div>
     </div>
-    {% endif %}
+  </section>
 
-    <div class="chat-container">
-        <header class="bg-white shadow-sm p-4 flex items-center justify-center sticky top-0 z-10"> <img src="{{ url_for('static', filename='images/chiron_logo.png') }}" alt="Chiron Logo" class="h-8"> </header>
-
-        <main id="chat-messages" class="chat-messages p-4 md:p-6 space-y-6">
-            {% for message in history %}
-                {% if message.role == 'user' %}
-                    <div class="flex justify-end"><div class="chat-bubble-user p-4 max-w-lg shadow-sm"><p>{{ message.content }}</p></div></div>
-                    {% else %}
-                    <div class="flex justify-start items-start gap-3">
-                        <img src="{{ avatar_url }}" alt="Chiron Avatar" class="w-10 h-10 rounded-full flex-shrink-0 mt-1" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm" style="display: none;">C</div>
-                        <div class="chat-bubble-assistant p-4 max-w-lg"><p>{{ message.content | safe }}</p></div>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </main>
-        <footer class="bg-white p-4 sticky bottom-0 z-10 border-t border-gray-200">
-            <div class="max-w-3xl mx-auto">
-                <form method="POST" action="/" id="chat-form">
-                    <div class="flex items-center border border-gray-300 rounded-full p-2 focus-within:ring-2 focus-within:ring-chiron-blue">
-                        <textarea name="user_input" rows="1" class="flex-grow w-full px-4 bg-transparent focus:outline-none resize-none" placeholder="Mesajını buraya yaz..."></textarea>
-                        <button type="submit" class="bg-chiron-blue text-white rounded-full p-2 ml-2 hover:bg-opacity-90 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" /></svg>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </footer>
+  <!-- Özellikler -->
+  <section id="features" class="py-14 md:py-20">
+    <div class="max-w-6xl mx-auto px-6 md:px-8">
+      <h2 class="text-2xl md:text-3xl font-semibold">Seni önde götüren özellikler</h2>
+      <div class="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="bg-white rounded-2xl p-6 border border-black/5 shadow-soft">
+          <h3 class="font-semibold">Mikro seanslar (10–12 dk)</h3>
+          <p class="mt-2 text-black/70">Günlük pratik + mini egzersiz; akışın bozulmadan ilerlersin.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-black/5 shadow-soft">
+          <h3 class="font-semibold">Kriz güvenliği</h3>
+          <p class="mt-2 text-black/70">Risk tespiti ve hızlı yönlendirme; güvende kalmanı önceleyen akış.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-black/5 shadow-soft">
+          <h3 class="font-semibold">İçsel Bahçe</h3>
+          <p class="mt-2 text-black/70">Her ilerlemeye görsel bir iz: tohum → fide → ağaç.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-black/5 shadow-soft">
+          <h3 class="font-semibold">Bulutlar & İmgelem</h3>
+          <p class="mt-2 text-black/70">Düşünceleri “bulut” olarak izle; beden-zihin regülasyonu.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-black/5 shadow-soft">
+          <h3 class="font-semibold">Ölçülebilir ilerleme</h3>
+          <p class="mt-2 text-black/70">7/14/30. günlerde mini ölçekler ve haftalık özet.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-black/5 shadow-soft">
+          <h3 class="font-semibold">Türkçe doğal dil</h3>
+          <p class="mt-2 text-black/70">Empatik, kısa ve anlaşılır yanıt stili.</p>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <script>
-        // --- BÖLÜM 1: TANIŞMA EKRANI YÖNETİMİ ---
-        const onboardingModal = document.getElementById('onboarding-modal');
-        if (onboardingModal) {
-            const onboardingWelcome = document.getElementById('onboarding-welcome');
-            const onboardingContent = document.getElementById('onboarding-content');
-            const nextButton = document.getElementById('next-button');
-            let onboardingStarted = false;
-            
-            const questions = [
-                { key: 'isim', type: 'text', text: 'Sana nasıl hitap etmemi istersin?', placeholder: 'Bir ad veya takma ad...' },
-                { key: 'yas_araligi', type: 'buttons', text: 'Hangi yaş aralığındasın?', options: ['18-24', '25-34', '35-44', '45+'] },
-                { key: 'gundem', type: 'buttons', text: 'Bugünlerde zihnini en çok ne meşgul ediyor?', options: ['İlişkiler', 'İş/Okul Stresi', 'Gelecek Kaygısı', 'Haberler/Gündem', 'Kendimi Anlamak', 'Sadece İçimi Dökmek'] },
-                { key: 'enerji_kaynagi', type: 'buttons', text: 'Hayatındaki insanlar sana daha çok enerji mi veriyor, yoksa enerjini mi alıyor?', options: ['Genellikle enerji veriyor', 'Dengede sayılır', 'Genellikle enerjimi alıyor'] },
-                { key: 'baskalarinin_fikri', type: 'buttons', text: 'Başkalarının senin hakkındaki düşünceleri, kararlarını ne ölçüde etkiler?', options: ['Çok etkiler', 'Biraz etkiler', 'Pek etkilemez'] },
-                { key: 'beklenti', type: 'text', text: 'Bu sohbetin sonunda kendini nasıl hissetmeyi umuyorsun?', placeholder: 'Örn: Anlaşılmış, rahatlamış...' }
-            ];
-            let currentQuestionIndex = 0;
-            const answers = {};
+  <!-- Programlar -->
+  <section id="programs" class="py-14 md:py-20 bg-white/70 border-y border-black/5">
+    <div class="max-w-6xl mx-auto px-6 md:px-8">
+      <h2 class="text-2xl md:text-3xl font-semibold">Programlar</h2>
+      <div class="mt-8 grid md:grid-cols-3 gap-6">
+        <article class="rounded-2xl p-6 bg-white border border-black/5 shadow-soft">
+          <h3 class="font-semibold">Kaygı – 21 Gün</h3>
+          <p class="mt-2 text-black/70">Bilişsel yeniden çerçeveleme + nefes + maruz kalma mikro adımları.</p>
+          <a href="https://beta.chiron.com.tr" class="mt-4 inline-flex px-4 py-2 rounded-xl bg-chiron-blue text-white hover:opacity-90">Başla</a>
+        </article>
+        <article class="rounded-2xl p-6 bg-white border border-black/5 shadow-soft">
+          <h3 class="font-semibold">Uyku – 14 Gün</h3>
+          <p class="mt-2 text-black/70">Uyku hijyeni protokolü + gevşeme ve nefes rutini.</p>
+          <a href="https://beta.chiron.com.tr" class="mt-4 inline-flex px-4 py-2 rounded-xl bg-chiron-blue text-white hover:opacity-90">Başla</a>
+        </article>
+        <article class="rounded-2xl p-6 bg-white border border-black/5 shadow-soft">
+          <h3 class="font-semibold">Stres – 14 Gün</h3>
+          <p class="mt-2 text-black/70">Gün içi reset pratikleri + odak ve sınır koyma egzersizleri.</p>
+          <a href="https://beta.chiron.com.tr" class="mt-4 inline-flex px-4 py-2 rounded-xl bg-chiron-blue text-white hover:opacity-90">Başla</a>
+        </article>
+      </div>
+    </div>
+  </section>
 
-            function showQuestion() {
-                const question = questions[currentQuestionIndex];
-                let html = `<div class="onboarding-question active" style="animation: fadeIn 0.5s;">`;
-                html += `<h2 class="text-2xl font-bold mb-4 text-chiron-dark">${question.text}</h2>`;
-                if (question.type === 'text') {
-                    html += `<input type="text" id="onboarding-input" class="w-full border border-gray-300 rounded-lg p-3 text-center focus:ring-2 focus:ring-chiron-blue focus:outline-none" placeholder="${question.placeholder}">`;
-                } else if (question.type === 'buttons') {
-                    html += '<div class="flex flex-wrap justify-center gap-3 mt-4">';
-                    question.options.forEach(option => { 
-                        html += `<button class="onboarding-option-btn bg-gray-100 text-gray-700 py-2 px-4 rounded-full hover:bg-chiron-blue hover:text-white transition-colors">${option}</button>`; 
-                    });
-                    html += '</div>';
-                }
-                html += `</div>`;
-                onboardingContent.innerHTML = html;
+  <!-- SSS -->
+  <section id="faq" class="py-14 md:py-20">
+    <div class="max-w-6xl mx-auto px-6 md:px-8">
+      <h2 class="text-2xl md:text-3xl font-semibold">Sık Sorulan Sorular</h2>
+      <div class="mt-6 space-y-4">
+        <details class="bg-white rounded-xl p-5 border border-black/5 shadow-soft">
+          <summary class="font-semibold cursor-pointer">Bu bir terapi mi?</summary>
+          <p class="mt-2 text-black/70">Hayır. Klinik tanı koymaz; kendi kendine yardım ve günlük pratik desteği sunar. Krizde profesyonel yardıma yönlendirir.</p>
+        </details>
+        <details class="bg-white rounded-xl p-5 border border-black/5 shadow-soft">
+          <summary class="font-semibold cursor-pointer">Ne kadar zaman ayırmalıyım?</summary>
+          <p class="mt-2 text-black/70">Günde 10–12 dakika yeterli. İstersen kısa “reset” pratiklerini gün içinde açabilirsin.</p>
+        </details>
+        <details class="bg-white rounded-xl p-5 border border-black/5 shadow-soft">
+          <summary class="font-semibold cursor-pointer">Ücretsiz deneme var mı?</summary>
+          <p class="mt-2 text-black/70">Evet, 7 gün ücretsiz deneme mevcut. Dilediğin an iptal edebilirsin.</p>
+        </details>
+      </div>
+      <div class="mt-8">
+        <a href="https://beta.chiron.com.tr" class="inline-flex items-center rounded-xl px-5 py-3 bg-chiron-blue text-white hover:opacity-90 shadow-soft">Ücretsiz Başla</a>
+      </div>
+    </div>
+  </section>
 
-                if (question.type === 'buttons') {
-                    document.querySelectorAll('.onboarding-option-btn').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            answers[question.key] = btn.innerText;
-                            handleNext();
-                        });
-                    });
-                    nextButton.style.display = 'none';
-                } else {
-                    document.getElementById('onboarding-input').focus();
-                    nextButton.style.display = 'inline-block';
-                }
-            }
+  <!-- Footer -->
+  <footer class="py-10 border-t border-black/5 bg-white/60">
+    <div class="max-w-6xl mx-auto px-6 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <img src="./chiron_logo.png" alt="Chiron" class="h-6 w-auto">
+        <span class="text-sm text-black/60">© <span id="y"></span> Chiron</span>
+      </div>
+      <div class="text-sm text-black/60 flex items-center gap-4">
+        <a href="#faq" class="hover:opacity-80">SSS</a>
+        <a href="mailto:hello@chiron.com.tr" class="hover:opacity-80">İletişim</a>
+        <a href="/privacy.html" class="hover:opacity-80">Gizlilik</a>
+      </div>
+    </div>
+  </footer>
 
-            function handleNext() {
-                if (!onboardingStarted) {
-                    onboardingWelcome.style.display = 'none';
-                    onboardingContent.classList.remove('hidden');
-                    onboardingStarted = true;
-                    showQuestion();
-                    return;
-                }
-
-                const question = questions[currentQuestionIndex];
-                if (question.type === 'text') {
-                    const input = document.getElementById('onboarding-input');
-                    if (!input.value.trim()) { 
-                        return; 
-                    }
-                    answers[question.key] = input.value.trim();
-                }
-                currentQuestionIndex++;
-                if (currentQuestionIndex < questions.length) {
-                    showQuestion();
-                } else {
-                    nextButton.disabled = true;
-                    nextButton.textContent = "Hazırlanıyor...";
-                    fetch('/complete_onboarding', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(answers)
-                    })
-                    .then(response => response.json())
-                    .then(data => { 
-                        if (data.success) { 
-                            window.location.reload(); 
-                        } 
-                    });
-                }
-            }
-            
-            nextButton.addEventListener('click', handleNext);
-        }
-
-        // --- BÖLÜM 2: AJAX SOHBET YÖNETİMİ (YENİ!) ---
-        const chatMessages = document.getElementById('chat-messages');
-        const chatForm = document.getElementById('chat-form');
-        const userInput = document.querySelector('textarea[name="user_input"]');
-        const submitButton = document.querySelector('#chat-form button[type="submit"]');
-
-        // Sayfa yüklendiğinde sohbeti en alta kaydır
-        if (chatMessages) {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        // Çift mesaj engelleme değişkenleri
-        let isMessageSending = false;
-        let lastMessage = '';
-        let lastMessageTime = 0;
-
-        // Mesaj gönderme fonksiyonu (AJAX) - GÜNCEL
-        function sendMessage(messageText) {
-            if (!messageText.trim()) return;
-
-            // Çift mesaj engelleme
-            const now = Date.now();
-            if (isMessageSending || 
-                (messageText === lastMessage && now - lastMessageTime < 2000)) {
-                console.log('Çift mesaj engellendi');
-                return;
-            }
-
-            isMessageSending = true;
-            lastMessage = messageText;
-            lastMessageTime = now;
-
-            // 1. Kullanıcı mesajını hemen göster
-            addUserMessage(messageText);
-            
-            // 2. "Yazıyor..." animasyonunu 800ms sonra göster
-            const typingTimeout = setTimeout(() => {
-                addTypingIndicator();
-            }, 800);
-
-            // 3. Input'u temizle ve butonu deaktive et
-            userInput.value = '';
-            setButtonState(false);
-
-            // 4. AJAX ile mesajı gönder
-            fetch('/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ message: messageText })
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Timeout'u temizle ve yazıyor animasyonunu kaldır
-                clearTimeout(typingTimeout);
-                removeTypingIndicator();
-                
-                if (data.success) {
-                    // Bot mesajını göster
-                    addBotMessage(data.message, data.buttons);
-                } else {
-                    addBotMessage("Üzgünüm, bir sorun yaşadım. Lütfen tekrar deneyin.");
-                }
-                
-                // Butonu tekrar aktif et ve gönderim kilidini aç
-                setButtonState(true);
-                isMessageSending = false;
-            })
-            .catch(error => {
-                console.error('Hata:', error);
-                clearTimeout(typingTimeout);
-                removeTypingIndicator();
-                addBotMessage("Bağlantı sorunu yaşandı. Lütfen tekrar deneyin.");
-                setButtonState(true);
-                isMessageSending = false;
-            });
-        }
-        
-        // Kullanıcı mesajını ekle
-        function addUserMessage(message) {
-            const userBubble = document.createElement('div');
-            userBubble.className = 'flex justify-end';
-            userBubble.innerHTML = `<div class="chat-bubble-user p-4 max-w-lg shadow-sm"><p>${escapeHtml(message)}</p></div>`;
-            chatMessages.appendChild(userBubble);
-            scrollToBottom();
-        }
-
-        // Bot mesajını ekle
-        function addBotMessage(message, buttons = null) {
-            const botBubble = document.createElement('div');
-            botBubble.className = 'flex justify-start';
-            botBubble.innerHTML = `<div class="chat-bubble-assistant p-4 max-w-lg"><p>${escapeHtml(message)}</p></div>`;
-            chatMessages.appendChild(botBubble);
-
-            // Butonları ekle (varsa)
-            if (buttons && buttons.length > 0) {
-                addButtonsToChat(buttons);
-            }
-            
-            scrollToBottom();
-        }
-
-        // "Yazıyor..." animasyonu ekle
-        function addTypingIndicator() {
-            // Zaten varsa ekleme
-            if (document.getElementById('typing-indicator')) return;
-            
-            const typingBubble = document.createElement('div');
-            typingBubble.className = 'flex justify-start';
-            typingBubble.id = 'typing-indicator';
-            typingBubble.innerHTML = `<div class="chat-bubble-assistant p-4 max-w-lg"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
-            chatMessages.appendChild(typingBubble);
-            scrollToBottom();
-        }
-
-        // "Yazıyor..." animasyonunu kaldır
-        function removeTypingIndicator() {
-            const typingIndicator = document.getElementById('typing-indicator');
-            if (typingIndicator) {
-                typingIndicator.remove();
-            }
-        }
-
-        // Butonları sohbete ekle - GÜNCEL
-        function addButtonsToChat(buttons) {
-            const buttonContainer = document.createElement('div');
-            buttonContainer.className = 'p-4 flex justify-center items-center gap-4 border-t border-gray-200';
-            buttonContainer.innerHTML = buttons.map(buttonText => 
-                `<button class="chat-button bg-white border border-chiron-blue text-chiron-blue font-semibold py-2 px-6 rounded-full hover:bg-chiron-blue hover:text-white transition-colors" data-message="${escapeHtml(buttonText)}">${escapeHtml(buttonText)}</button>`
-            ).join('');
-            
-            chatMessages.appendChild(buttonContainer);
-            
-            // Buton click eventlerini ekle - GÜNCEL
-            buttonContainer.querySelectorAll('.chat-button').forEach(button => {
-                button.addEventListener('click', () => {
-                    // Çift tıklama engelle
-                    if (button.disabled || isMessageSending) return;
-                    
-                    const message = button.getAttribute('data-message');
-                    
-                    // Tüm butonları deaktive et
-                    buttonContainer.querySelectorAll('.chat-button').forEach(btn => {
-                        btn.disabled = true;
-                        btn.style.opacity = '0.5';
-                    });
-                    
-                    // Butonları kaldır ve mesajı gönder
-                    setTimeout(() => {
-                        buttonContainer.remove();
-                        sendMessage(message);
-                    }, 100);
-                });
-            });
-            
-            scrollToBottom();
-        }
-
-        // Buton durumunu ayarla
-        function setButtonState(enabled) {
-            submitButton.disabled = !enabled;
-            if (enabled) {
-                submitButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" /></svg>`;
-            } else {
-                submitButton.innerHTML = `<svg class="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
-            }
-        }
-
-        // Scroll to bottom
-        function scrollToBottom() {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        // HTML escape
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Form submit event
-        if (chatForm) {
-            chatForm.addEventListener('submit', function(event) {
-                event.preventDefault(); // Sayfa yenilenmesini engelle
-                const messageText = userInput.value.trim();
-                sendMessage(messageText);
-            });
-        }
-
-        // Enter tuşu ile gönderme
-        if (userInput) {
-            userInput.addEventListener('keydown', function(event) {
-                if (event.key === 'Enter' && !event.shiftKey) {
-                    event.preventDefault();
-                    const messageText = userInput.value.trim();
-                    sendMessage(messageText);
-                }
-            });
-        }
-    </script>
-    
-    <style> 
-        @keyframes fadeIn { 
-            from { opacity: 0; } 
-            to { opacity: 1; } 
-        } 
-        .hidden { 
-            display: none; 
-        } 
-    </style>
+  <!-- Küçük JS: mobil menü & yumuşak kaydırma -->
+  <script>
+    const btn = document.getElementById('menuBtn');
+    const menu = document.getElementById('mobileMenu');
+    btn?.addEventListener('click', () => menu.classList.toggle('hidden'));
+    document.getElementById('y').textContent = new Date().getFullYear();
+    // Dahili linklerde smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', e=>{
+        const id=a.getAttribute('href').slice(1);
+        const el=document.getElementById(id);
+        if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth', block:'start'}); menu?.classList.add('hidden'); }
+      });
+    });
+  </script>
 </body>
 </html>
