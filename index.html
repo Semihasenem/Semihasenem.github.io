@@ -3,152 +3,394 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chiron - İçsel Yolculuğuna Başla</title>
-    
-    <link rel="icon" href="./chiron_logo.png" type="image/png">
-    
-    <!-- Tailwind CSS -->
+    <title>Chiron ile Sohbet</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.jpeg') }}" type="image/jpeg">
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Inter', sans-serif; background-color: #FDFBF6; }
+        body { font-family: 'Inter', sans-serif; background-color: #F0F4F8; }
         .text-chiron-dark { color: #4A5568; }
         .text-chiron-blue { color: #5F939A; }
         .bg-chiron-blue { background-color: #5F939A; }
-        .hover\:bg-chiron-blue-dark:hover { background-color: #4A7C82; }
-        .transition-all {
-            transition-property: all;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 300ms;
+        .chat-bubble-user { background-color: #ffffff; align-self: flex-end; border-radius: 20px 20px 4px 20px; max-width: 85%; }
+        .chat-bubble-assistant { background-color: #E6F0F1; align-self: flex-start; border-radius: 20px 20px 20px 4px; max-width: 85%; }
+        html, body { height: 100%; }
+        .chat-container { display: flex; flex-direction: column; height: 100vh; }
+        .chat-messages { flex-grow: 1; overflow-y: auto; }
+        /* YENİ: "Yazıyor..." animasyonu için stiller */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+        }
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            margin: 0 2px;
+            background-color: #9FB3B6;
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
         }
     </style>
 </head>
-<body class="text-chiron-dark antialiased">
+<body class="text-chiron-dark">
 
-    <!-- Ana Başlık ve Giriş Bölümü -->
-    <header class="text-center py-20 px-6">
-        <div class="max-w-4xl mx-auto">
+    {% if onboarding_needed %}
+    <div id="onboarding-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-lg w-full text-center">
             
-            <div class="relative inline-block mb-8">
-                <img src="./chiron_logo.png" alt="Chiron Logo" class="mx-auto h-20" 
-                     onerror="this.onerror=null;this.src='https://placehold.co/200x80/FDFBF6/5F939A?text=Logo+Bulunamadı';">
-                <span class="absolute top-0 right-0 -mr-4 -mt-2 bg-chiron-blue text-white text-xs font-bold px-2 py-1 rounded-full">
-                    BETA
-                </span>
+            <div id="onboarding-welcome">
+                <img src="{{ url_for('static', filename='images/chiron_logo.png') }}" alt="Chiron Logo" class="h-8 mx-auto mb-4">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Merhaba! ✨</h2>
+                <p class="text-gray-600 mb-6">Seni daha iyi tanımak için birkaç kısa sorum olacak.</p>
             </div>
             
-            <h1 class="text-4xl md:text-6xl font-bold text-chiron-dark leading-tight mb-4">
-                Duygularını Anlamak İçin<br class="hidden md:block"> Bir Adım At
-            </h1>
-            
-            <p class="text-lg md:text-xl max-w-2xl mx-auto mb-8">
-                Chiron, öncül psikolojik desteğe erişimi kısıtlı olan herkes için burada. Psikolojik iyi oluş yolculuğunda sana eşlik eden, yargılamayan ve şefkatli dijital rehberin.
-            </p>
-            
-            <!-- DÜZELTİLDİ: Buton linki web app adresine yönlendirildi -->
-            <a href="https://beta.chiron.com.tr" target="_blank" class="bg-chiron-blue text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-chiron-blue-dark transition-all shadow-lg inline-block">
-                Hemen Sohbete Başla
-            </a>
-            <p class="mt-4 text-sm text-gray-500">Ücretsiz • Gizli • Her zaman yanında</p>
-        </div>
-    </header>
+            <div id="onboarding-content" class="hidden">
+            </div>
 
-    <!-- Nasıl Çalışır? Bölümü -->
-    <section id="how-it-works" class="py-20 bg-white">
-        <div class="container mx-auto px-6 text-center">
-            <h2 class="text-3xl font-bold mb-2">Senin Yolculuğun, Senin Hızında</h2>
-            <p class="text-lg mb-12 text-gray-600">Üç basit adımda iç dünyanı keşfet.</p>
-            
-            <div class="flex flex-col md:flex-row justify-center gap-10 md:gap-16">
-                <!-- Adım 1: Anlat -->
-                <div class="flex-1 max-w-sm">
-                    <div class="bg-chiron-blue bg-opacity-10 w-16 h-16 flex items-center justify-center mx-auto rounded-full mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-chiron-blue">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-2.138a1.125 1.125 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
-                        </svg>
+            <div class="mt-8">
+                <button id="next-button" class="bg-chiron-blue text-white font-bold py-2 px-8 rounded-full hover:bg-opacity-90 transition-colors">İleri</button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="chat-container">
+        <header class="bg-white shadow-sm p-4 flex items-center justify-center sticky top-0 z-10"> <img src="{{ url_for('static', filename='images/chiron_logo.png') }}" alt="Chiron Logo" class="h-8"> </header>
+
+        <main id="chat-messages" class="chat-messages p-4 md:p-6 space-y-6">
+            {% for message in history %}
+                {% if message.role == 'user' %}
+                    <div class="flex justify-end"><div class="chat-bubble-user p-4 max-w-lg shadow-sm"><p>{{ message.content }}</p></div></div>
+                    {% else %}
+                    <div class="flex justify-start items-start gap-3">
+                        <img src="{{ avatar_url }}" alt="Chiron Avatar" class="w-10 h-10 rounded-full flex-shrink-0 mt-1" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm" style="display: none;">C</div>
+                        <div class="chat-bubble-assistant p-4 max-w-lg"><p>{{ message.content | safe }}</p></div>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">1. Anlat</h3>
-                    <p>İçinden geldiği gibi, yargılanma korkusu olmadan düşüncelerini ve hislerini paylaş.</p>
-                </div>
-                <!-- Adım 2: Keşfet -->
-                <div class="flex-1 max-w-sm">
-                    <div class="bg-chiron-blue bg-opacity-10 w-16 h-16 flex items-center justify-center mx-auto rounded-full mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-chiron-blue">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.562L16.25 21.75l-.648-1.188a2.25 2.25 0 01-1.423-1.423L13.5 18.75l1.188-.648a2.25 2.25 0 011.423-1.423L16.25 15l.648 1.188a2.25 2.25 0 011.423 1.423L18.75 18l-1.188.648a2.25 2.25 0 01-1.423 1.423z" />
-                        </svg>
+                {% endif %}
+            {% endfor %}
+        </main>
+        <footer class="bg-white p-4 sticky bottom-0 z-10 border-t border-gray-200">
+            <div class="max-w-3xl mx-auto">
+                <form method="POST" action="/" id="chat-form">
+                    <div class="flex items-center border border-gray-300 rounded-full p-2 focus-within:ring-2 focus-within:ring-chiron-blue">
+                        <textarea name="user_input" rows="1" class="flex-grow w-full px-4 bg-transparent focus:outline-none resize-none" placeholder="Mesajını buraya yaz..."></textarea>
+                        <button type="submit" class="bg-chiron-blue text-white rounded-full p-2 ml-2 hover:bg-opacity-90 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" /></svg>
+                        </button>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">2. Keşfet</h3>
-                    <p>Chiron'un şefkatli rehberliğiyle duygularının ve düşüncelerinin ardındaki kalıpları fark et.</p>
-                </div>
-                <!-- Adım 3: Büyü -->
-                <div class="flex-1 max-w-sm">
-                    <div class="bg-chiron-blue bg-opacity-10 w-16 h-16 flex items-center justify-center mx-auto rounded-full mb-4">
-                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-chiron-blue">
-                           <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c1.358 0 2.673-.112 3.954-.332M12 21c-1.358 0-2.673-.112-3.954-.332M3.253 9.332A9.003 9.003 0 0112 3c1.358 0 2.673.112 3.954.332M20.747 9.332A9.003 9.003 0 0012 3c-1.358 0-2.673-.112-3.954-.332" />
-                           <path stroke-linecap="round" stroke-linejoin="round" d="M12 9.75a3 3 0 100-6 3 3 0 000 6z" />
-                         </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">3. Büyü</h3>
-                    <p>Kendine karşı daha anlayışlı ve şefkatli bir bakış açısı geliştirerek içsel gücünü yeniden kazan.</p>
-                </div>
+                </form>
             </div>
-        </div>
-    </section>
+        </footer>
+    </div>
 
-    <section id="why-chiron" class="py-20">
-        <div class="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
-            <div class="md:w-1/2">
-                <div class="bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-3xl font-bold mb-4 text-chiron-blue">Sana Özel Bir Alan</h2>
-                    <p class="mb-4">Chiron, sadece sana özel bir yol arkadaşıdır. Tanışma sürecinden itibaren seni dinler, öğrenir ve sadece senin ihtiyaçlarına göre bir destek ortamı yaratır.</p>
-                    <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <svg class="w-6 h-6 text-chiron-blue mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.82m5.84-2.56a14.98 14.98 0 00-11.68 0M12 21a9 9 0 110-18 9 9 0 010 18z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M12 12a3 3 0 110-6 3 3 0 010 6z"></path></svg>
-                            <span><strong class="font-semibold">Bilişsel Davranışçı Terapi (BDT)</strong> temelli, kanıta dayalı teknikler kullanır.</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-6 h-6 text-chiron-blue mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <span><strong class="font-semibold">7/24 Erişilebilir:</strong> İhtiyaç duyduğun her an, her yerde yanında.</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-6 h-6 text-chiron-blue mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H4.5a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"></path></svg>
-                            <span><strong class="font-semibold">Gizlilik ve Güvenlik:</strong> Konuşmaların tamamen sana özel ve güvende.</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="md:w-1/2 text-center md:text-left">
-                <h3 class="text-3xl font-bold mb-4">Sadece Bir Sohbetten Daha Fazlası</h3>
-                <p class="text-lg">Chiron, gelecekte duygularını bir heykele dönüştürebileceğin veya içsel büyümeni bir ağacın çiçek açması gibi görselleştirebileceğin yaratıcı araçlar sunmayı hedefler. Bu, senin benzersiz ve kişisel yolculuğun.</p>
-            </div>
-        </div>
-    </section>
+    <script>
+        // --- BÖLÜM 1: TANIŞMA EKRANI YÖNETİMİ ---
+        const onboardingModal = document.getElementById('onboarding-modal');
+        if (onboardingModal) {
+            const onboardingWelcome = document.getElementById('onboarding-welcome');
+            const onboardingContent = document.getElementById('onboarding-content');
+            const nextButton = document.getElementById('next-button');
+            let onboardingStarted = false;
+            
+            const questions = [
+                { key: 'isim', type: 'text', text: 'Sana nasıl hitap etmemi istersin?', placeholder: 'Bir ad veya takma ad...' },
+                { key: 'yas_araligi', type: 'buttons', text: 'Hangi yaş aralığındasın?', options: ['18-24', '25-34', '35-44', '45+'] },
+                { key: 'gundem', type: 'buttons', text: 'Bugünlerde zihnini en çok ne meşgul ediyor?', options: ['İlişkiler', 'İş/Okul Stresi', 'Gelecek Kaygısı', 'Haberler/Gündem', 'Kendimi Anlamak', 'Sadece İçimi Dökmek'] },
+                { key: 'enerji_kaynagi', type: 'buttons', text: 'Hayatındaki insanlar sana daha çok enerji mi veriyor, yoksa enerjini mi alıyor?', options: ['Genellikle enerji veriyor', 'Dengede sayılır', 'Genellikle enerjimi alıyor'] },
+                { key: 'baskalarinin_fikri', type: 'buttons', text: 'Başkalarının senin hakkındaki düşünceleri, kararlarını ne ölçüde etkiler?', options: ['Çok etkiler', 'Biraz etkiler', 'Pek etkilemez'] },
+                { key: 'beklenti', type: 'text', text: 'Bu sohbetin sonunda kendini nasıl hissetmeyi umuyorsun?', placeholder: 'Örn: Anlaşılmış, rahatlamış...' }
+            ];
+            let currentQuestionIndex = 0;
+            const answers = {};
 
-    <section id="final-cta" class="py-20 bg-white">
-        <div class="container mx-auto px-6 text-center">
-            <h2 class="text-3xl font-bold mb-4">Kendine Verebileceğin En Güzel Hediye</h2>
-            <p class="text-lg max-w-2xl mx-auto mb-8">Bugün, kendine daha şefkatli yaklaşmak ve iç dünyanı keşfetmek için ilk adımı at. Chiron bu yolda sana eşlik etmek için burada.</p>
-            <!-- DÜZELTİLDİ: Buton linki web app adresine yönlendirildi -->
-            <a href="https://beta.chiron.com.tr" target="_blank" class="bg-chiron-blue text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-chiron-blue-dark transition-all shadow-lg">
-                Ücretsiz Başla
-            </a>
-        </div>
-    </section>
+            function showQuestion() {
+                const question = questions[currentQuestionIndex];
+                let html = `<div class="onboarding-question active" style="animation: fadeIn 0.5s;">`;
+                html += `<h2 class="text-2xl font-bold mb-4 text-chiron-dark">${question.text}</h2>`;
+                if (question.type === 'text') {
+                    html += `<input type="text" id="onboarding-input" class="w-full border border-gray-300 rounded-lg p-3 text-center focus:ring-2 focus:ring-chiron-blue focus:outline-none" placeholder="${question.placeholder}">`;
+                } else if (question.type === 'buttons') {
+                    html += '<div class="flex flex-wrap justify-center gap-3 mt-4">';
+                    question.options.forEach(option => { 
+                        html += `<button class="onboarding-option-btn bg-gray-100 text-gray-700 py-2 px-4 rounded-full hover:bg-chiron-blue hover:text-white transition-colors">${option}</button>`; 
+                    });
+                    html += '</div>';
+                }
+                html += `</div>`;
+                onboardingContent.innerHTML = html;
 
-    <footer class="bg-gray-100 text-center py-8">
-        <p>&copy; 2025 Chiron. Tüm hakları saklıdır.</p>
-        <div class="mt-2">
-            <a href="gizlilik.html" class="text-chiron-blue hover:underline">Gizlilik Politikası</a>
-            <span class="mx-2">&middot;</span>
-            <a href="#" class="text-chiron-blue hover:underline">İletişim</a>
-        </div>
-    </footer>
+                if (question.type === 'buttons') {
+                    document.querySelectorAll('.onboarding-option-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            answers[question.key] = btn.innerText;
+                            handleNext();
+                        });
+                    });
+                    nextButton.style.display = 'none';
+                } else {
+                    document.getElementById('onboarding-input').focus();
+                    nextButton.style.display = 'inline-block';
+                }
+            }
 
+            function handleNext() {
+                if (!onboardingStarted) {
+                    onboardingWelcome.style.display = 'none';
+                    onboardingContent.classList.remove('hidden');
+                    onboardingStarted = true;
+                    showQuestion();
+                    return;
+                }
+
+                const question = questions[currentQuestionIndex];
+                if (question.type === 'text') {
+                    const input = document.getElementById('onboarding-input');
+                    if (!input.value.trim()) { 
+                        return; 
+                    }
+                    answers[question.key] = input.value.trim();
+                }
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) {
+                    showQuestion();
+                } else {
+                    nextButton.disabled = true;
+                    nextButton.textContent = "Hazırlanıyor...";
+                    fetch('/complete_onboarding', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(answers)
+                    })
+                    .then(response => response.json())
+                    .then(data => { 
+                        if (data.success) { 
+                            window.location.reload(); 
+                        } 
+                    });
+                }
+            }
+            
+            nextButton.addEventListener('click', handleNext);
+        }
+
+        // --- BÖLÜM 2: AJAX SOHBET YÖNETİMİ (YENİ!) ---
+        const chatMessages = document.getElementById('chat-messages');
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.querySelector('textarea[name="user_input"]');
+        const submitButton = document.querySelector('#chat-form button[type="submit"]');
+
+        // Sayfa yüklendiğinde sohbeti en alta kaydır
+        if (chatMessages) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Çift mesaj engelleme değişkenleri
+        let isMessageSending = false;
+        let lastMessage = '';
+        let lastMessageTime = 0;
+
+        // Mesaj gönderme fonksiyonu (AJAX) - GÜNCEL
+        function sendMessage(messageText) {
+            if (!messageText.trim()) return;
+
+            // Çift mesaj engelleme
+            const now = Date.now();
+            if (isMessageSending || 
+                (messageText === lastMessage && now - lastMessageTime < 2000)) {
+                console.log('Çift mesaj engellendi');
+                return;
+            }
+
+            isMessageSending = true;
+            lastMessage = messageText;
+            lastMessageTime = now;
+
+            // 1. Kullanıcı mesajını hemen göster
+            addUserMessage(messageText);
+            
+            // 2. "Yazıyor..." animasyonunu 800ms sonra göster
+            const typingTimeout = setTimeout(() => {
+                addTypingIndicator();
+            }, 800);
+
+            // 3. Input'u temizle ve butonu deaktive et
+            userInput.value = '';
+            setButtonState(false);
+
+            // 4. AJAX ile mesajı gönder
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: messageText })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Timeout'u temizle ve yazıyor animasyonunu kaldır
+                clearTimeout(typingTimeout);
+                removeTypingIndicator();
+                
+                if (data.success) {
+                    // Bot mesajını göster
+                    addBotMessage(data.message, data.buttons);
+                } else {
+                    addBotMessage("Üzgünüm, bir sorun yaşadım. Lütfen tekrar deneyin.");
+                }
+                
+                // Butonu tekrar aktif et ve gönderim kilidini aç
+                setButtonState(true);
+                isMessageSending = false;
+            })
+            .catch(error => {
+                console.error('Hata:', error);
+                clearTimeout(typingTimeout);
+                removeTypingIndicator();
+                addBotMessage("Bağlantı sorunu yaşandı. Lütfen tekrar deneyin.");
+                setButtonState(true);
+                isMessageSending = false;
+            });
+        }
+        
+        // Kullanıcı mesajını ekle
+        function addUserMessage(message) {
+            const userBubble = document.createElement('div');
+            userBubble.className = 'flex justify-end';
+            userBubble.innerHTML = `<div class="chat-bubble-user p-4 max-w-lg shadow-sm"><p>${escapeHtml(message)}</p></div>`;
+            chatMessages.appendChild(userBubble);
+            scrollToBottom();
+        }
+
+        // Bot mesajını ekle
+        function addBotMessage(message, buttons = null) {
+            const botBubble = document.createElement('div');
+            botBubble.className = 'flex justify-start';
+            botBubble.innerHTML = `<div class="chat-bubble-assistant p-4 max-w-lg"><p>${escapeHtml(message)}</p></div>`;
+            chatMessages.appendChild(botBubble);
+
+            // Butonları ekle (varsa)
+            if (buttons && buttons.length > 0) {
+                addButtonsToChat(buttons);
+            }
+            
+            scrollToBottom();
+        }
+
+        // "Yazıyor..." animasyonu ekle
+        function addTypingIndicator() {
+            // Zaten varsa ekleme
+            if (document.getElementById('typing-indicator')) return;
+            
+            const typingBubble = document.createElement('div');
+            typingBubble.className = 'flex justify-start';
+            typingBubble.id = 'typing-indicator';
+            typingBubble.innerHTML = `<div class="chat-bubble-assistant p-4 max-w-lg"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
+            chatMessages.appendChild(typingBubble);
+            scrollToBottom();
+        }
+
+        // "Yazıyor..." animasyonunu kaldır
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // Butonları sohbete ekle - GÜNCEL
+        function addButtonsToChat(buttons) {
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'p-4 flex justify-center items-center gap-4 border-t border-gray-200';
+            buttonContainer.innerHTML = buttons.map(buttonText => 
+                `<button class="chat-button bg-white border border-chiron-blue text-chiron-blue font-semibold py-2 px-6 rounded-full hover:bg-chiron-blue hover:text-white transition-colors" data-message="${escapeHtml(buttonText)}">${escapeHtml(buttonText)}</button>`
+            ).join('');
+            
+            chatMessages.appendChild(buttonContainer);
+            
+            // Buton click eventlerini ekle - GÜNCEL
+            buttonContainer.querySelectorAll('.chat-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    // Çift tıklama engelle
+                    if (button.disabled || isMessageSending) return;
+                    
+                    const message = button.getAttribute('data-message');
+                    
+                    // Tüm butonları deaktive et
+                    buttonContainer.querySelectorAll('.chat-button').forEach(btn => {
+                        btn.disabled = true;
+                        btn.style.opacity = '0.5';
+                    });
+                    
+                    // Butonları kaldır ve mesajı gönder
+                    setTimeout(() => {
+                        buttonContainer.remove();
+                        sendMessage(message);
+                    }, 100);
+                });
+            });
+            
+            scrollToBottom();
+        }
+
+        // Buton durumunu ayarla
+        function setButtonState(enabled) {
+            submitButton.disabled = !enabled;
+            if (enabled) {
+                submitButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" /></svg>`;
+            } else {
+                submitButton.innerHTML = `<svg class="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
+            }
+        }
+
+        // Scroll to bottom
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // HTML escape
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Form submit event
+        if (chatForm) {
+            chatForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Sayfa yenilenmesini engelle
+                const messageText = userInput.value.trim();
+                sendMessage(messageText);
+            });
+        }
+
+        // Enter tuşu ile gönderme
+        if (userInput) {
+            userInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault();
+                    const messageText = userInput.value.trim();
+                    sendMessage(messageText);
+                }
+            });
+        }
+    </script>
+    
+    <style> 
+        @keyframes fadeIn { 
+            from { opacity: 0; } 
+            to { opacity: 1; } 
+        } 
+        .hidden { 
+            display: none; 
+        } 
+    </style>
 </body>
 </html>
