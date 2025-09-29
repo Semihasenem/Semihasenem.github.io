@@ -2,218 +2,582 @@
 <html lang="tr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Chiron – Günlük mikro seanslarla kaygı, uyku ve stres için destek</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>İçsel Yolculuğunu Başlat</title>
+  <link rel="icon" type="image/png" href="./chiron_logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --lavender: #7367c4;
+      --lavender-deep: #5b4daa;
+      --cream: #f7f4ef;
+      --sage: #7aa191;
+      --ink: #2f3440;
+      --clay: #caa78f;
+    }
 
-  <!-- Tailwind CDN + özel tema -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'chiron-blue':  '#6A94A4',
-            'chiron-ink':   '#334155',
-            'chiron-cream': '#F8F7F3'
-          },
-          fontFamily: { inter: ['Inter','ui-sans-serif','system-ui'] },
-          boxShadow: { soft: '0 10px 30px -12px rgba(0,0,0,.12)' }
-        }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 20% 20%, rgba(250,245,239,0.95), rgba(242,236,229,0.9)), linear-gradient(135deg, rgba(115,103,196,0.25), rgba(202,167,143,0.15));
+      color: var(--ink);
+      font-family: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img { max-width: 100%; height: auto; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(12px);
+      background: rgba(247, 244, 239, 0.88);
+      border-bottom: 1px solid rgba(47, 52, 64, 0.07);
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.2rem clamp(1.2rem, 3vw, 2.4rem);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.8rem;
+      align-items: center;
+      font-size: 0.95rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 100%;
+      height: 2px;
+      border-radius: 999px;
+      background: var(--lavender);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 220ms ease;
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a:focus-visible::after { transform: scaleX(1); }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.9rem 1.6rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--lavender), var(--sage));
+      color: #fff;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 14px 34px -20px rgba(75, 68, 128, 0.6);
+      transition: transform 220ms ease, box-shadow 220ms ease;
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus-visible {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 18px 38px -18px rgba(75, 68, 128, 0.7);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.85rem 1.4rem;
+      border-radius: 999px;
+      border: 1px solid rgba(91, 77, 170, 0.35);
+      color: var(--lavender-deep);
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 220ms ease, color 220ms ease;
+    }
+
+    .btn-secondary:hover,
+    .btn-secondary:focus-visible {
+      background: rgba(115, 103, 196, 0.08);
+      color: var(--lavender);
+    }
+
+    main section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: clamp(3.5rem, 8vw, 6rem) clamp(1.2rem, 3vw, 2.6rem);
+    }
+
+    .hero {
+      display: grid;
+      gap: clamp(2rem, 6vw, 4rem);
+      align-items: center;
+    }
+
+    .hero-text h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.6rem, 6vw, 3.6rem);
+      line-height: 1.1;
+      margin: 0;
+    }
+
+    .hero-text p {
+      margin-top: 1.2rem;
+      font-size: clamp(1rem, 2.3vw, 1.2rem);
+      line-height: 1.6;
+      color: rgba(47,52,64,0.75);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1.8rem;
+    }
+
+    .hero-card {
+      position: relative;
+      border-radius: 28px;
+      padding: clamp(2rem, 5vw, 2.4rem);
+      background: rgba(255,255,255,0.75);
+      border: 1px solid rgba(47,52,64,0.08);
+      box-shadow: 0 30px 60px -40px rgba(69,63,122,0.5);
+      overflow: hidden;
+      min-height: 280px;
+    }
+
+    .hero-card::before,
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(0);
+      opacity: 0.5;
+      animation: float 12s ease-in-out infinite;
+    }
+
+    .hero-card::before {
+      width: 160px; height: 160px;
+      background: rgba(115,103,196,0.25);
+      top: -40px; left: -30px;
+    }
+
+    .hero-card::after {
+      width: 220px; height: 220px;
+      background: rgba(122,161,145,0.22);
+      bottom: -80px; right: -30px;
+      animation-delay: -4s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .hero-card figure {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+
+    .hero-card img {
+      max-width: 200px;
+      width: 60%;
+    }
+
+    .whisper {
+      position: fixed;
+      left: 50%;
+      top: 96px;
+      transform: translate(-50%, -20px);
+      background: rgba(255, 255, 255, 0.94);
+      border-radius: 20px;
+      padding: 0.85rem 1.2rem;
+      box-shadow: 0 18px 45px -30px rgba(47, 52, 64, 0.45);
+      font-size: 0.95rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 400ms ease, transform 400ms ease;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .whisper svg { flex-shrink: 0; }
+
+    .whisper.is-visible {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 2.6rem);
+      margin: 0 0 1rem;
+    }
+
+    .section-lead {
+      max-width: 620px;
+      margin: 0;
+      color: rgba(47,52,64,0.74);
+      line-height: 1.65;
+    }
+
+    .pill-grid {
+      display: grid;
+      gap: 1.5rem;
+      margin-top: 2.4rem;
+    }
+
+    .pill {
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(47,52,64,0.08);
+      border-radius: 26px;
+      padding: 1.6rem 1.8rem;
+      display: grid;
+      gap: 0.6rem;
+      transition: transform 220ms ease, border-color 220ms ease;
+    }
+
+    .pill:hover,
+    .pill:focus-within {
+      transform: translateY(-4px);
+      border-color: rgba(115,103,196,0.35);
+    }
+
+    .pill strong {
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .icon-circle {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(115,103,196,0.15);
+      color: var(--lavender-deep);
+      box-shadow: inset 0 0 0 1px rgba(115,103,196,0.25);
+      flex-shrink: 0;
+    }
+
+    .features-grid {
+      display: grid;
+      gap: 1.4rem;
+      margin-top: 2.6rem;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.88);
+      border-radius: 24px;
+      border: 1px solid rgba(47,52,64,0.08);
+      padding: 1.8rem;
+      display: grid;
+      gap: 0.8rem;
+      box-shadow: 0 24px 50px -38px rgba(47,52,64,0.45);
+      transition: transform 230ms ease, box-shadow 230ms ease;
+    }
+
+    .feature-card:hover,
+    .feature-card:focus-within {
+      transform: translateY(-6px);
+      box-shadow: 0 28px 60px -32px rgba(91,77,170,0.45);
+    }
+
+    .feature-card h3 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+
+    .steps {
+      display: grid;
+      gap: 1.6rem;
+      margin-top: 2.6rem;
+      counter-reset: steps;
+    }
+
+    .step {
+      background: rgba(255,255,255,0.85);
+      border-radius: 22px;
+      padding: 1.6rem 1.8rem;
+      border: 1px solid rgba(115,103,196,0.15);
+      display: grid;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .step::before {
+      counter-increment: steps;
+      content: counter(steps);
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 600;
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: rgba(115,103,196,0.15);
+      color: var(--lavender-deep);
+    }
+
+    .step h4 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+
+    .step p { margin: 0; color: rgba(47,52,64,0.72); line-height: 1.6; }
+
+    .ethics {
+      background: rgba(255,255,255,0.9);
+      border-radius: 30px;
+      border: 1px solid rgba(47,52,64,0.08);
+      padding: clamp(2.2rem, 6vw, 3rem);
+      display: grid;
+      gap: 1rem;
+      box-shadow: 0 36px 80px -56px rgba(47,52,64,0.45);
+    }
+
+    .ethics ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      display: grid;
+      gap: 0.6rem;
+      color: rgba(47,52,64,0.75);
+      line-height: 1.6;
+    }
+
+    .cta-final {
+      text-align: center;
+      background: linear-gradient(135deg, rgba(115,103,196,0.16), rgba(122,161,145,0.2));
+      border-radius: 36px;
+      border: 1px solid rgba(91,77,170,0.1);
+      padding: clamp(2.6rem, 7vw, 4rem) clamp(1.8rem, 5vw, 3rem);
+      box-shadow: 0 40px 90px -70px rgba(115,103,196,0.65);
+    }
+
+    .cta-final p {
+      margin: 1rem auto 2rem;
+      max-width: 560px;
+      color: rgba(47,52,64,0.75);
+      line-height: 1.7;
+    }
+
+    footer {
+      padding: 2rem 1.4rem 3rem;
+      text-align: center;
+      color: rgba(47,52,64,0.75);
+      font-size: 0.9rem;
+    }
+
+    footer span {
+      font-family: 'Playfair Display', serif;
+      letter-spacing: 0.02em;
+    }
+
+    .vine {
+      position: absolute;
+      right: -30px;
+      bottom: -10px;
+      width: clamp(200px, 28vw, 320px);
+      pointer-events: none;
+      opacity: 0.75;
+    }
+
+    .vine path {
+      stroke: rgba(122,161,145,0.6);
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      stroke-dasharray: 480;
+      stroke-dashoffset: 480;
+      animation: grow 8s ease-in-out forwards;
+      animation-delay: 1.2s;
+    }
+
+    @keyframes grow {
+      0% { stroke-dashoffset: 480; }
+      100% { stroke-dashoffset: 0; }
+    }
+
+    @media (min-width: 880px) {
+      .hero { grid-template-columns: 1.1fr 0.9fr; }
+      .pill-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .features-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .step::before {
+        position: absolute;
+        top: 1.6rem;
+        left: 1.6rem;
+      }
+      .step h4, .step p {
+        margin-left: 0;
+        padding-left: 3.8rem;
       }
     }
-  </script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Meta / sosyal -->
-  <meta name="description" content="Chiron: 10–12 dakikalık rehberli pratiklerle ölçülebilir ilerleme. Kaygı, uyku, stres için günlük mikro seanslar.">
-  <link rel="icon" type="image/png" href="./chiron_logo.png">
-  <meta name="theme-color" content="#6A94A4">
-  <meta property="og:title" content="Chiron – İçsel Yolculuğuna Başla">
-  <meta property="og:description" content="Günlük mikro seanslarla kaygı, uyku ve stres için pratik destek.">
-  <meta property="og:image" content="https://www.chiron.com.tr/chiron_logo.png">
-  <style>
-    /* Hafif bulut dokusu (hero arka planı) */
-    .clouds:before{
-      content:""; position:absolute; inset:-25% -10% 0 -10%;
-      background:
-        radial-gradient(180px 70px at 10% 20%, rgba(255,255,255,.7), transparent 60%),
-        radial-gradient(220px 90px at 70% 10%, rgba(255,255,255,.55), transparent 65%),
-        radial-gradient(200px 80px at 40% 35%, rgba(255,255,255,.4), transparent 60%),
-        radial-gradient(280px 120px at 90% 60%, rgba(255,255,255,.35), transparent 65%);
-      filter: blur(8px);
+    @media (max-width: 879px) {
+      .nav-links { display: none; }
+      header { padding: 0.6rem 0; }
     }
   </style>
 </head>
-<body class="bg-chiron-cream text-chiron-ink font-inter antialiased">
-
-  <!-- Header -->
-  <header class="sticky top-0 z-40 bg-chiron-cream/90 backdrop-blur border-b border-black/5">
-    <div class="max-w-6xl mx-auto h-16 px-6 md:px-8 flex items-center justify-between">
-      <a class="flex items-center gap-3" href="#top">
-        <img src="./chiron_logo.png" alt="Chiron" class="h-8 w-auto" loading="eager" decoding="async">
-        <span class="sr-only">Chiron</span>
+<body>
+  <header>
+    <div class="nav-container">
+      <a href="#hero" aria-label="Ana sayfa">
+        <img src="./chiron_logo.png" alt="Chiron logosu" height="40">
       </a>
-
-      <nav class="hidden md:flex items-center gap-6 text-sm">
-        <a href="#features" class="hover:opacity-80">Özellikler</a>
-        <a href="#programs"  class="hover:opacity-80">Programlar</a>
-        <a href="#faq"       class="hover:opacity-80">SSS</a>
+      <nav class="nav-links" aria-label="Ana menü">
+        <a href="#problem">Neden burada?</a>
+        <a href="#features">Özellikler</a>
+        <a href="#journey">Nasıl işler?</a>
+        <a href="#trust">Güven</a>
       </nav>
-
-      <div class="flex items-center gap-3">
-        <a href="https://beta.chiron.com.tr" class="hidden sm:inline-flex items-center rounded-xl px-4 py-2 bg-chiron-blue text-white hover:opacity-90 shadow-soft">Ücretsiz Başla</a>
-        <button id="menuBtn" class="md:hidden p-2 rounded-lg border border-black/10" aria-label="Menüyü Aç/Kapat">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </button>
-      </div>
-    </div>
-    <!-- Mobil menü -->
-    <div id="mobileMenu" class="md:hidden hidden border-t border-black/5">
-      <div class="max-w-6xl mx-auto px-6 py-3 flex flex-col gap-3 text-sm">
-        <a href="#features" class="py-2">Özellikler</a>
-        <a href="#programs"  class="py-2">Programlar</a>
-        <a href="#faq"       class="py-2">SSS</a>
-        <a href="https://beta.chiron.com.tr" class="mt-2 inline-flex items-center justify-center rounded-xl px-4 py-2 bg-chiron-blue text-white">Ücretsiz Başla</a>
-      </div>
+      <a class="btn-primary" href="#cta">Yolculuğa Başla</a>
     </div>
   </header>
 
-  <!-- Hero -->
-  <section id="top" class="relative">
-    <div class="clouds absolute inset-0 pointer-events-none"></div>
-    <div class="relative max-w-6xl mx-auto px-6 md:px-8 py-14 md:py-20 grid md:grid-cols-2 gap-10 items-center">
-      <div>
-        <h1 class="text-3xl md:text-5xl font-semibold leading-tight">
-          Günlük mikro seanslarla <span class="text-chiron-blue">kaygı, uyku, stres</span> için gerçek destek.
-        </h1>
-        <p class="mt-4 text-base md:text-lg text-black/70">
-          10–12 dakikalık rehberli pratikler, ölçülebilir ilerleme ve nazik bir yol arkadaşı.
-        </p>
-        <div class="mt-6 flex flex-wrap gap-3">
-          <a href="https://beta.chiron.com.tr" class="inline-flex items-center rounded-xl px-5 py-3 bg-chiron-blue text-white hover:opacity-90 shadow-soft">Ücretsiz Başla</a>
-          <a href="#features" class="inline-flex items-center rounded-xl px-5 py-3 border border-chiron-blue/40 hover:bg-white/50">Nasıl Çalışır?</a>
-        </div>
-        <p class="mt-3 text-xs text-black/60">7 gün dene · İstediğin an iptal</p>
-      </div>
+  <div id="whisper" class="whisper" role="status" aria-live="polite">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 19c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.7.663 3.255 1.768 4.5L6 21l4.042-2.084C10.702 18.963 11.339 19 12 19Z" stroke="var(--lavender)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span>Merhaba, bugün nelerin üstesinden gelmeye çalışıyorsun?</span>
+  </div>
 
-      <div class="relative aspect-[4/3] md:aspect-square rounded-2xl border border-black/5 bg-white/60 shadow-soft overflow-hidden">
-        <div class="absolute inset-0 grid place-items-center">
-          <img src="./chiron_logo.png" alt="Chiron logo" class="h-20 md:h-28 w-auto opacity-90 select-none">
-        </div>
-        <div class="absolute inset-0 bg-gradient-to-tr from-chiron-blue/10 via-transparent to-white/40 pointer-events-none"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Özellikler -->
-  <section id="features" class="py-14 md:py-20">
-    <div class="max-w-6xl mx-auto px-6 md:px-8">
-      <h2 class="text-2xl md:text-3xl font-semibold">Seni önde götüren özellikler</h2>
-      <div class="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="bg-white rounded-2xl p-6 border border-black/5 shadow-soft">
-          <h3 class="font-semibold">Mikro seanslar (10–12 dk)</h3>
-          <p class="mt-2 text-black/70">Günlük pratik + mini egzersiz; akışın bozulmadan ilerlersin.</p>
-        </div>
-        <div class="bg-white rounded-2xl p-6 border border-black/5 shadow-soft">
-          <h3 class="font-semibold">Kriz güvenliği</h3>
-          <p class="mt-2 text-black/70">Risk tespiti ve hızlı yönlendirme; güvende kalmanı önceleyen akış.</p>
-        </div>
-        <div class="bg-white rounded-2xl p-6 border border-black/5 shadow-soft">
-          <h3 class="font-semibold">İçsel Bahçe</h3>
-          <p class="mt-2 text-black/70">Her ilerlemeye görsel bir iz: tohum → fide → ağaç.</p>
-        </div>
-        <div class="bg-white rounded-2xl p-6 border border-black/5 shadow-soft">
-          <h3 class="font-semibold">Bulutlar & İmgelem</h3>
-          <p class="mt-2 text-black/70">Düşünceleri “bulut” olarak izle; beden-zihin regülasyonu.</p>
-        </div>
-        <div class="bg-white rounded-2xl p-6 border border-black/5 shadow-soft">
-          <h3 class="font-semibold">Ölçülebilir ilerleme</h3>
-          <p class="mt-2 text-black/70">7/14/30. günlerde mini ölçekler ve haftalık özet.</p>
-        </div>
-        <div class="bg-white rounded-2xl p-6 border border-black/5 shadow-soft">
-          <h3 class="font-semibold">Türkçe doğal dil</h3>
-          <p class="mt-2 text-black/70">Empatik, kısa ve anlaşılır yanıt stili.</p>
+  <main>
+    <section id="hero" class="hero">
+      <div class="hero-text">
+        <h1>İçindeki Şifacıyı Keşfet.</h1>
+        <p>Dinleyen, anlayan ve içsel yolculuğunda yanında olan akıllı rehber; mucizeyi senin ortaya çıkarabileceğine inanıyor. Her adımın, kendi dönüşümün için nazik bir davet.</p>
+        <div class="hero-actions">
+          <a class="btn-primary" href="#cta">Ruhsal iyi halin için yolculuğuna bugün başla</a>
+          <a class="btn-secondary" href="#journey">Nasıl ilerliyoruz?</a>
         </div>
       </div>
-    </div>
-  </section>
+      <div class="hero-card" aria-hidden="true">
+        <figure>
+          <img src="./chiron_logo.png" alt="Şefkatli rehber logosu">
+        </figure>
+        <svg class="vine" viewBox="0 0 320 240" aria-hidden="true">
+          <path d="M10 220 C60 160, 120 200, 150 150 S220 80, 260 130 310 80, 290 30" />
+          <path d="M120 180 Q140 150, 130 120" />
+          <path d="M210 150 Q230 120, 220 90" />
+        </svg>
+      </div>
+    </section>
 
-  <!-- Programlar -->
-  <section id="programs" class="py-14 md:py-20 bg-white/70 border-y border-black/5">
-    <div class="max-w-6xl mx-auto px-6 md:px-8">
-      <h2 class="text-2xl md:text-3xl font-semibold">Programlar</h2>
-      <div class="mt-8 grid md:grid-cols-3 gap-6">
-        <article class="rounded-2xl p-6 bg-white border border-black/5 shadow-soft">
-          <h3 class="font-semibold">Kaygı – 21 Gün</h3>
-          <p class="mt-2 text-black/70">Bilişsel yeniden çerçeveleme + nefes + maruz kalma mikro adımları.</p>
-          <a href="https://beta.chiron.com.tr" class="mt-4 inline-flex px-4 py-2 rounded-xl bg-chiron-blue text-white hover:opacity-90">Başla</a>
+    <section id="problem">
+      <h2 class="section-title">Yalnız hissetmene gerek yok</h2>
+      <p class="section-lead">Maddi imkânsızlıklar, toplumsal önyargılar... Psikolojik iyi oluş bir lüks değil, ihtiyaç. Bu yol arkadaşı, engelleri kaldırmak ve sağlıklı bir ruh hâline yaklaşmana destek olmak için burada.</p>
+      <div class="pill-grid" role="list">
+        <article class="pill" role="listitem">
+          <strong><span class="icon-circle">🌱</span>Kendini Keşfet</strong>
+          <p>Kendini Bil ilkesini dijital bir pusulaya dönüştür. Seni harekete geçiren ve durduran tüm duyguları fark ederek seçimlerini bilinçli hale getir.</p>
         </article>
-        <article class="rounded-2xl p-6 bg-white border border-black/5 shadow-soft">
-          <h3 class="font-semibold">Uyku – 14 Gün</h3>
-          <p class="mt-2 text-black/70">Uyku hijyeni protokolü + gevşeme ve nefes rutini.</p>
-          <a href="https://beta.chiron.com.tr" class="mt-4 inline-flex px-4 py-2 rounded-xl bg-chiron-blue text-white hover:opacity-90">Başla</a>
+        <article class="pill" role="listitem">
+          <strong><span class="icon-circle">🛠️</span>Pratik Araçlar</strong>
+          <p>BDT, ACT ve mindfulness temelli egzersizlerle duygularını düzenlemeyi öğren; her biri günlük yaşama kolayca uyarlanır.</p>
         </article>
-        <article class="rounded-2xl p-6 bg-white border border-black/5 shadow-soft">
-          <h3 class="font-semibold">Stres – 14 Gün</h3>
-          <p class="mt-2 text-black/70">Gün içi reset pratikleri + odak ve sınır koyma egzersizleri.</p>
-          <a href="https://beta.chiron.com.tr" class="mt-4 inline-flex px-4 py-2 rounded-xl bg-chiron-blue text-white hover:opacity-90">Başla</a>
+        <article class="pill" role="listitem">
+          <strong><span class="icon-circle">🤝</span>Yoldaşlık</strong>
+          <p>Yargılanmadan, gizlilik içinde yanında duran; her ânını dikkate alan empatik bir destek deneyimi yaşa.</p>
         </article>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- SSS -->
-  <section id="faq" class="py-14 md:py-20">
-    <div class="max-w-6xl mx-auto px-6 md:px-8">
-      <h2 class="text-2xl md:text-3xl font-semibold">Sık Sorulan Sorular</h2>
-      <div class="mt-6 space-y-4">
-        <details class="bg-white rounded-xl p-5 border border-black/5 shadow-soft">
-          <summary class="font-semibold cursor-pointer">Bu bir terapi mi?</summary>
-          <p class="mt-2 text-black/70">Hayır. Klinik tanı koymaz; kendi kendine yardım ve günlük pratik desteği sunar. Krizde profesyonel yardıma yönlendirir.</p>
-        </details>
-        <details class="bg-white rounded-xl p-5 border border-black/5 shadow-soft">
-          <summary class="font-semibold cursor-pointer">Ne kadar zaman ayırmalıyım?</summary>
-          <p class="mt-2 text-black/70">Günde 10–12 dakika yeterli. İstersen kısa “reset” pratiklerini gün içinde açabilirsin.</p>
-        </details>
-        <details class="bg-white rounded-xl p-5 border border-black/5 shadow-soft">
-          <summary class="font-semibold cursor-pointer">Ücretsiz deneme var mı?</summary>
-          <p class="mt-2 text-black/70">Evet, 7 gün ücretsiz deneme mevcut. Dilediğin an iptal edebilirsin.</p>
-        </details>
+    <section id="features">
+      <h2 class="section-title">Öne çıkan özellikler</h2>
+      <p class="section-lead">Soyut kavramları somutlaştıran görseller, şiirsel geçişler ve mikro etkileşimlerle kişisel dönüşümünü destekleyen modülleri keşfet.</p>
+      <div class="features-grid" role="list">
+        <article class="feature-card" role="listitem">
+          <strong><span class="icon-circle">💭</span>Bilişsel Davranışçı Terapi Destekli Alıştırmalar</strong>
+          <p>Düşünce kalıplarını fark etmeni ve dönüştürmeni sağlayan yapılandırılmış refleksiyon serileri.</p>
+        </article>
+        <article class="feature-card" role="listitem">
+          <strong><span class="icon-circle">🪢</span>İçsel Aile Sistemleri &amp; Beden Farkındalığı</strong>
+          <p>Benliğinin her parçasıyla nazik bir diyalog kurmanı sağlayan somatik farkındalık eşlikçileri.</p>
+        </article>
+        <article class="feature-card" role="listitem">
+          <strong><span class="icon-circle">♀️</span>Hormonlar ve Ruh Hâli Rehberi</strong>
+          <p>Özellikle kadınların ihtiyaçlarına göre hazırlanmış döngü takibi, beslenme ve duygu haritası önerileri.</p>
+        </article>
+        <article class="feature-card" role="listitem">
+          <strong><span class="icon-circle">⚛️</span>Atomik Alışkanlıklarla Kalıcı Değişim</strong>
+          <p>Mikro adımlarla süreklilik kuran hatırlatıcılar, ritüeller ve ödüllendirici içgörüler.</p>
+        </article>
       </div>
-      <div class="mt-8">
-        <a href="https://beta.chiron.com.tr" class="inline-flex items-center rounded-xl px-5 py-3 bg-chiron-blue text-white hover:opacity-90 shadow-soft">Ücretsiz Başla</a>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Footer -->
-  <footer class="py-10 border-t border-black/5 bg-white/60">
-    <div class="max-w-6xl mx-auto px-6 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <img src="./chiron_logo.png" alt="Chiron" class="h-6 w-auto">
-        <span class="text-sm text-black/60">© <span id="y"></span> Chiron</span>
+    <section id="journey">
+      <h2 class="section-title">Nasıl çalışır?</h2>
+      <p class="section-lead">Her adım, içsel bahçeni büyütecek yeni bir filiz gibi. Basit akış, karmaşayı azaltır ve dönüşüme alan açar.</p>
+      <div class="steps" role="list">
+        <article class="step" role="listitem">
+          <h4>Anlat</h4>
+          <p>Nasıl hissettiğini anlat; kelimelerin güvenle karşılanır.</p>
+        </article>
+        <article class="step" role="listitem">
+          <h4>Keşfet</h4>
+          <p>Duygularının kökenini anla, sana uygun pratiklerle tanış.</p>
+        </article>
+        <article class="step" role="listitem">
+          <h4>Uygula &amp; Geliş</h4>
+          <p>Günlük alıştırmalar ve ilerleme izleme ile dönüşümüne tanıklık et.</p>
+        </article>
       </div>
-      <div class="text-sm text-black/60 flex items-center gap-4">
-        <a href="#faq" class="hover:opacity-80">SSS</a>
-        <a href="mailto:hello@chiron.com.tr" class="hover:opacity-80">İletişim</a>
-        <a href="/privacy.html" class="hover:opacity-80">Gizlilik</a>
+    </section>
+
+    <section id="trust">
+      <div class="ethics">
+        <h2 class="section-title">Birinci önceliğimiz güven ve gizlilik</h2>
+        <p class="section-lead">Bu rehber, profesyonel destek ihtiyacını hafife almaz; aksine, gerekli durumlarda seni yönlendirmek için hazırdır.</p>
+        <ul>
+          <li>Buradaki yol arkadaşı terapist değildir; içgörü sunan dijital bir destekçidir.</li>
+          <li>Ciddi bir kriz içindeysen, vakit kaybetmeden en yakın sağlık kuruluşuna başvurmalısın.</li>
+          <li>Tüm konuşmaların gizli kalır; verilerin mahremiyetine saygı duyulur.</li>
+        </ul>
       </div>
-    </div>
+    </section>
+
+    <section id="cta">
+      <div class="cta-final">
+        <h2 class="section-title">Bir sıfırdan büyüktür.</h2>
+        <p>En küçük pratik bile iyiliğine doğru bir adımdır. Kendi iyilik hâlini inşa etmeye bugün başla; bu adım sadece sana değil, iyileşen bir topluma da ışık olur.</p>
+        <a class="btn-primary" href="#hero">ÜCRETSİZ – Hemen Başla</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>Kendi mucizeni ancak sen yaratabilirsin.</span>
   </footer>
 
-  <!-- Küçük JS: mobil menü & yumuşak kaydırma -->
   <script>
-    const btn = document.getElementById('menuBtn');
-    const menu = document.getElementById('mobileMenu');
-    btn?.addEventListener('click', () => menu.classList.toggle('hidden'));
-    document.getElementById('y').textContent = new Date().getFullYear();
-    // Dahili linklerde smooth scroll
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{
-      a.addEventListener('click', e=>{
-        const id=a.getAttribute('href').slice(1);
-        const el=document.getElementById(id);
-        if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth', block:'start'}); menu?.classList.add('hidden'); }
-      });
+    const whisper = document.getElementById('whisper');
+    window.addEventListener('load', () => {
+      setTimeout(() => whisper.classList.add('is-visible'), 200);
+      setTimeout(() => whisper.classList.remove('is-visible'), 3200);
     });
   </script>
 </body>
